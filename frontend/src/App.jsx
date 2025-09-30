@@ -1,17 +1,13 @@
-import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import { Routes, Route } from "react-router-dom";
 import HomeScreen from "./Screens/HomeScreen";
+import AddDetailsScreen from "./Screens/AddDetailsScreen";
+import AptitudeScreen from "./Screens/AptitudeScreen";
+import FeedbackScreen from "./Screens/FeedbackScreen";
 
 function App() {
   return (
     <>
-      <Navbar />
-
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-      </Routes>
-
       <ToastContainer
         position="bottom-center"
         autoClose={5000}
@@ -24,6 +20,12 @@ function App() {
         pauseOnHover
         theme="dark"
       />
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/add-details" element={<AddDetailsScreen />} />
+        <Route path="/aptitude" element={<AptitudeScreen/>}/>
+        <Route path="/feedback" element={<FeedbackScreen/>}/>
+      </Routes>
     </>
   );
 }
