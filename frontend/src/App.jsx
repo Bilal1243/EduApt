@@ -4,6 +4,8 @@ import HomeScreen from "./Screens/HomeScreen";
 import AddDetailsScreen from "./Screens/AddDetailsScreen";
 import AptitudeScreen from "./Screens/AptitudeScreen";
 import FeedbackScreen from "./Screens/FeedbackScreen";
+import ThankYouScreen from "./Screens/ThankYouScreen";
+import StudentListScreen from "./Screens/StudentListScreen";
 
 function App() {
   return (
@@ -25,6 +27,9 @@ function App() {
         <Route path="/add-details" element={<AddDetailsScreen />} />
         <Route path="/aptitude" element={<AptitudeScreen/>}/>
         <Route path="/feedback" element={<FeedbackScreen/>}/>
+        <Route path="/thankyou" element={<ThankYouScreen/>}/>
+
+        <Route path="/edure/listStudents" element={<StudentListScreen/>}/>
       </Routes>
     </>
   );

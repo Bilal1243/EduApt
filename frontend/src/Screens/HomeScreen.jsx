@@ -28,7 +28,7 @@ function HomeScreen() {
             career.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.div whileHover={{ scale: 1.05 }}>
+            <motion.div whileHover={{ scale: 1.05 }} className="mt-5">
               <Link
                 to="https://edure.in/"
                 target="_blank"
@@ -38,7 +38,7 @@ function HomeScreen() {
                 Learn More
               </Link>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }}>
+            <motion.div whileHover={{ scale: 1.05 }} className="mt-5">
               <Link
                 to="/add-details"
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"

@@ -57,7 +57,7 @@ function AddDetailsScreen() {
     if (!validateForm()) return;
 
     dispatch(setStudentDetails(formData));
-    toast.success("Details saved! Proceed to aptitude exam.");
+    // toast.success("Details saved! Proceed to aptitude exam.");
     navigate("/aptitude");
   };
 

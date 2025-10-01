@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFinalMark, clearUserData } from "../slices/userDetailsSlice";
+import { setFeedback, setStudentDetails } from "../slices/userDetailsSlice";
 import { toast } from "react-toastify";
 import { useSubmitFeedbackMutation } from "../slices/userApiSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function FeedbackScreen() {
   const dispatch = useDispatch();
   const studentDetails = useSelector((state) => state.user.finalData);
 
-  const [feedback, setFeedback] = useState({
+  const [feedback, setLocalFeedback] = useState({
     testExperience: "",
     computerKnowledge: "",
     usesAI: "",
@@ -19,12 +19,21 @@ function FeedbackScreen() {
   });
 
   const [submitFeedback] = useSubmitFeedbackMutation();
-
-  const naivgate = useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFeedback({ ...feedback, [e.target.name]: e.target.value });
+    setLocalFeedback({ ...feedback, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (!studentDetails._id) {
+      // maybe fetch from localStorage again or redirect
+      const data = JSON.parse(localStorage.getItem("finalData"));
+      if (data?._id) {
+        dispatch(setStudentDetails(data));
+      }
+    }
+  }, [studentDetails]);
 
   const handleSubmit = async () => {
     if (
@@ -38,25 +47,24 @@ function FeedbackScreen() {
       return toast.error("Please fill all required fields!");
     }
 
-    const updatedData = {
-      ...studentDetails,
-      feedback,
-    };
+    const updatedData = { ...studentDetails, feedback };
 
-    dispatch(setFinalMark(updatedData.finalMark || 0)); // preserve final mark
+    // ✅ Update Redux state
+    dispatch(setFeedback(updatedData));
     localStorage.setItem("finalData", JSON.stringify(updatedData));
 
     try {
       await submitFeedback({
+        userId: studentDetails._id,
         name: studentDetails.name,
         phone: studentDetails.mobile,
         email: studentDetails.email,
         college: studentDetails.college,
-        feedback: studentDetails.feedback,
+        feedback,
       }).unwrap();
+
       toast.success("✅ Feedback saved successfully!");
-      dispatch(clearUserData());
-      naivgate('/')
+      navigate("/thankyou");
     } catch (error) {
       toast.error(error?.message || error?.data?.message);
     }

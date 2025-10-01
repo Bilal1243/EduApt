@@ -1,10 +1,19 @@
-import express from 'express'
-import { submitData, submitFeedback } from '../controllers/userController.js'
+import express from "express";
+import {
+  getAllStudents,
+  addFeedback,
+  addStudent,
+  getFeedbacks,
+} from "../controllers/userController.js";
 
-const userRoute = express.Router()
+const userRoute = express.Router();
 
-userRoute.post('/submit',submitData)
+userRoute.get("/", getAllStudents);
 
-userRoute.post('/feedback',submitFeedback)
+userRoute.post("/add-student", addStudent);
 
-export default userRoute
+userRoute.get('/getFeedbacks',getFeedbacks)
+
+userRoute.post("/feedback", addFeedback);
+
+export default userRoute;

@@ -1,83 +1,98 @@
-import fs from "fs";               // import fs
-import path from "path";           // for safe file paths
-import XLSX from "xlsx";
+import Students from "../model/studentsModel.js";
+import Feedback from "../model/feedbackModel.js";
 
-// Make sure filePath is defined
-const filePath = path.resolve("student submissions.xlsx");
-const feedbackPath = path.resolve("student feedbacks.xlsx");
-
-
-const submitData = async (req, res) => {
+const getAllStudents = async (req, res) => {
   try {
-    const formData = req.body;
+    const students = await Students.find({}).select(
+      "name email mobile college department sem aptitudeMark"
+    );
 
-    let workbook;
-    if (fs.existsSync(filePath)) {
-      workbook = XLSX.readFile(filePath);
-    } else {
-      workbook = XLSX.utils.book_new();
-    }
-
-    const sheetName = "student submissions";
-    let worksheet = workbook.Sheets[sheetName];
-
-    let data = worksheet ? XLSX.utils.sheet_to_json(worksheet) : [];
-    data.push(formData);
-
-    worksheet = XLSX.utils.json_to_sheet(data);
-
-    // remove old sheet if it exists
-    if (workbook.Sheets[sheetName]) {
-      delete workbook.Sheets[sheetName];
-      workbook.SheetNames = workbook.SheetNames.filter((s) => s !== sheetName);
-    }
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    XLSX.writeFile(workbook, filePath);
-
-    res.json({ message: "✅ Form data saved to Excel!" });
+    res.status(200).json(students);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server Error" });
+    res.status(500).json({ message: "Server error fetching students" });
   }
 };
 
-
-const submitFeedback = async (req, res) => {
+const addStudent = async (req, res) => {
   try {
-    const feedbackData = req.body; 
+    const {
+      name,
+      email,
+      mobile,
+      department,
+      college,
+      place,
+      sem,
+      aptitudeMark,
+    } = req.body;
 
-    let workbook;
-    if (fs.existsSync(feedbackPath)) {
-      workbook = XLSX.readFile(feedbackPath);
-    } else {
-      workbook = XLSX.utils.book_new();
+    const studentExists = await Students.findOne({ email });
+    if (studentExists) {
+      return res.status(400).json({ message: "Student already registered" });
     }
 
-    const sheetName = "student feedbacks";
-    let worksheet = workbook.Sheets[sheetName];
+    const student = new Students({
+      name,
+      email,
+      mobile,
+      department,
+      college,
+      place,
+      sem,
+      aptitudeMark,
+    });
 
-    let data = worksheet ? XLSX.utils.sheet_to_json(worksheet) : [];
-    data.push(feedbackData);
+    const savedStudent = await student.save();
 
-    worksheet = XLSX.utils.json_to_sheet(data);
-
-    // remove old sheet if exists
-    if (workbook.Sheets[sheetName]) {
-      delete workbook.Sheets[sheetName];
-      workbook.SheetNames = workbook.SheetNames.filter((s) => s !== sheetName);
-    }
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    XLSX.writeFile(workbook, feedbackPath);
-
-    res.json({ message: "✅ Feedback saved to Excel!" });
+    res.status(201).json({
+      message: "✅ Student added successfully",
+      student: savedStudent,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server Error" });
+    console.error("Error adding student:", error);
+    res.status(500).json({ message: "Server error, could not add student" });
   }
 };
 
-export { submitData,submitFeedback };
+const getFeedbacks = async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 });
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const addFeedback = async (req, res) => {
+  try {
+    const { userId, name, phone, email, college, feedback } = req.body;
+
+    const newFeedback = new Feedback({
+      userId,
+      name,
+      phone,
+      email,
+      college,
+      testExperience: feedback.testExperience,
+      computerKnowledge: feedback.computerKnowledge,
+      usesAI: feedback.usesAI,
+      aiTool: feedback.aiTool,
+      wantMoreAI: feedback.wantMoreAI,
+      interestedCourses: feedback.interestedCourses,
+    });
+
+    const savedFeedback = await newFeedback.save();
+
+    res.status(201).json({
+      message: "✅ Feedback submitted successfully",
+      feedback: savedFeedback,
+    });
+  } catch (error) {
+    console.error("Error adding feedback:", error);
+    res.status(500).json({ message: "Server error, could not save feedback" });
+  }
+};
+
+export { getAllStudents, addStudent, addFeedback,getFeedbacks };

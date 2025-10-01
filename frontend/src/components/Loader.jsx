@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 function Loader() {
-  const text = "EDURE...";
+  const text = "edure...";
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-white">

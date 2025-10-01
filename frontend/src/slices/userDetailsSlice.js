@@ -17,7 +17,9 @@ const userSlice = createSlice({
       localStorage.setItem("finalData", JSON.stringify(state.finalData));
     },
     setFeedback: (state, action) => {
-      state.finalData = { feedback: action.payload };
+      state.finalData = {
+        ...action.payload, // update feedback only
+      };
       localStorage.setItem("finalData", JSON.stringify(state.finalData));
     },
     clearUserData: (state) => {
