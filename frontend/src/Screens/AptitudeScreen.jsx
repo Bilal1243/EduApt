@@ -152,7 +152,7 @@ function AptitudeScreen() {
   const dispatch = useDispatch();
   const studentDetails = useSelector((state) => state.user.finalData);
 
-  const [submitData] = useAddUserDataMutation();
+  const [submitData, { isLoading }] = useAddUserDataMutation();
 
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -214,7 +214,7 @@ function AptitudeScreen() {
       <form
         className="w-full max-w-3xl grid gap-6"
         onSubmit={(e) => {
-          e.preventDefault(); 
+          e.preventDefault();
           handleSubmit();
         }}
       >
@@ -246,17 +246,17 @@ function AptitudeScreen() {
 
         <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4 mb-14">
           <button
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
+          >
+            {isLoading ? "please wait.." : "submit"}
+          </button>
+          <button
             type="button"
             onClick={() => navigate(-1)}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
           >
             Back
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
-          >
-            Submit
           </button>
         </div>
       </form>

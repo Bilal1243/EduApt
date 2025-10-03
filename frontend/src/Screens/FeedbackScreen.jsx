@@ -18,7 +18,7 @@ function FeedbackScreen() {
     interestedCourses: "",
   });
 
-  const [submitFeedback] = useSubmitFeedbackMutation();
+  const [submitFeedback,{isLoading}] = useSubmitFeedbackMutation();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -176,7 +176,7 @@ function FeedbackScreen() {
           onClick={handleSubmit}
           className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition mt-4"
         >
-          Submit Feedback
+          {isLoading ? 'please wait..' : 'Submit Feedback'}
         </button>
       </div>
     </div>
