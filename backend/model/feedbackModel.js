@@ -11,6 +11,7 @@ const feedbackSchema = new mongoose.Schema(
     phone: { type: String, required: true, trim: true },
     email: { type: String, required: true, lowercase: true, trim: true },
     college: { type: String, required: true, trim: true },
+    place: { type: String, required: true, trim: true },
 
     // From your frontend state
     testExperience: { type: String, default: "" },

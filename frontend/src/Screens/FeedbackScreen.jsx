@@ -60,6 +60,7 @@ function FeedbackScreen() {
         phone: studentDetails.mobile,
         email: studentDetails.email,
         college: studentDetails.college,
+        place: studentDetails.place,
         feedback,
       }).unwrap();
 
@@ -120,7 +121,7 @@ function FeedbackScreen() {
         {/* Which AI */}
         {feedback.usesAI === "Yes" && (
           <>
-            <label className="font-medium">Which AI are you using?</label>
+            <label className="font-medium">Which type of AI are you using?</label>
             <input
               type="text"
               name="aiTool"
@@ -134,7 +135,7 @@ function FeedbackScreen() {
 
         {/* Want to know more about AI */}
         <label className="font-medium">
-          Do you want to know more about AI?
+          Do you want to know more about working of AI?
         </label>
         <select
           name="wantMoreAI"
@@ -150,16 +151,26 @@ function FeedbackScreen() {
 
         {/* Interested Courses */}
         <label className="font-medium">
-          Which other courses are you interested in?
+          Do you like to build a career in IT field?
         </label>
-        <input
-          type="text"
+        <select
           name="interestedCourses"
           value={feedback.interestedCourses}
           onChange={handleChange}
-          placeholder="Eg: MERN, Data Science, AI, Cybersecurity..."
           className="border p-2 rounded-lg"
-        />
+        >
+          <option value="">Select</option>
+          <option value="Pg in Ai">Pg in Ai</option>
+          <option value="Pg in Business Analytics">Pg in Business Analytics</option>
+          <option value="Pg in International Finance">Pg in International Finance</option>
+          <option value="Diploma in Data Science">Diploma in Data Science</option>
+          <option value="Diploma in Data Analytics">Diploma in Data Analytics</option>
+          <option value="Diploma in Financial Analytics">Diploma in Financial Analytics</option>
+          <option value="Mern Stack Development">Mern Stack Development</option>
+          <option value="Full Stack With Python">Full Stack With Python</option>
+          <option value="Digital Marketing">Digital Marketing</option>
+          <option value="Software Testing">Software Testing</option>
+        </select>
 
         <button
           onClick={handleSubmit}

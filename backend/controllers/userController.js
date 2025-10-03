@@ -4,7 +4,7 @@ import Feedback from "../model/feedbackModel.js";
 const getAllStudents = async (req, res) => {
   try {
     const students = await Students.find({}).select(
-      "name email mobile college department sem aptitudeMark"
+      "name email mobile college place department sem aptitudeMark"
     );
 
     res.status(200).json(students);
@@ -67,7 +67,7 @@ const getFeedbacks = async (req, res) => {
 
 const addFeedback = async (req, res) => {
   try {
-    const { userId, name, phone, email, college, feedback } = req.body;
+    const { userId, name, phone, email, college, place, feedback } = req.body;
 
     const newFeedback = new Feedback({
       userId,
@@ -75,6 +75,7 @@ const addFeedback = async (req, res) => {
       phone,
       email,
       college,
+      place,
       testExperience: feedback.testExperience,
       computerKnowledge: feedback.computerKnowledge,
       usesAI: feedback.usesAI,
@@ -95,4 +96,4 @@ const addFeedback = async (req, res) => {
   }
 };
 
-export { getAllStudents, addStudent, addFeedback,getFeedbacks };
+export { getAllStudents, addStudent, addFeedback, getFeedbacks };

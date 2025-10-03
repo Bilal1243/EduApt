@@ -25,6 +25,7 @@ function StudentListScreen() {
       Email: s.email,
       Mobile: s.mobile,
       College: s.college,
+      Place : s.place,
       Department: s.department,
       Semester: s.sem,
       "Aptitude Mark": s.aptitudeMark || 0,
@@ -47,6 +48,7 @@ function StudentListScreen() {
       Phone: f.phone,
       Email: f.email,
       College: f.college,
+      Place : f.place,
       "Test Experience": f.testExperience,
       "Computer Knowledge": f.computerKnowledge,
       "Uses AI": f.usesAI,
@@ -64,7 +66,7 @@ function StudentListScreen() {
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4">Student List</h1>
+      <h1 className="text-2xl font-bold mb-4">Student List - {sortedStudents.length}</h1>
 
       <div className="flex justify-end mb-4 gap-2">
         <button

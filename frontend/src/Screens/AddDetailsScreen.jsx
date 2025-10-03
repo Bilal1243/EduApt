@@ -38,28 +38,49 @@ function AddDetailsScreen() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const validateForm = () => {
-    const { name, mobile, email, department, college, place, sem } = formData;
-    if (!name.trim()) return toast.error("Name is required");
-    if (!/^\d{10}$/.test(mobile))
-      return toast.error("Enter a valid 10-digit mobile number");
-    if (!/^\S+@\S+\.\S+$/.test(email))
-      return toast.error("Enter a valid email");
-    if (!department.trim()) return toast.error("Department is required");
-    if (!college.trim()) return toast.error("College is required");
-    if (!place.trim()) return toast.error("Place is required");
-    if (!sem || sem < 1) return toast.error("Enter a valid semester");
-    return true;
-  };
+const validateForm = () => {
+  const { name, mobile, email, department, college, place, sem } = formData;
 
-  const handleNext = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  if (!name.trim()) {
+    toast.error("Name is required");
+    return false;
+  }
+  if (!/^\d{10}$/.test(mobile)) {
+    toast.error("Enter a valid 10-digit mobile number");
+    return false;
+  }
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    toast.error("Enter a valid email");
+    return false;
+  }
+  if (!department.trim()) {
+    toast.error("Department is required");
+    return false;
+  }
+  if (!college.trim()) {
+    toast.error("College is required");
+    return false;
+  }
+  if (!place.trim()) {
+    toast.error("Place is required");
+    return false;
+  }
+  if (!sem || sem < 1) {
+    toast.error("Enter a valid semester");
+    return false;
+  }
 
-    dispatch(setStudentDetails(formData));
-    // toast.success("Details saved! Proceed to aptitude exam.");
-    navigate("/aptitude");
-  };
+  return true; 
+};
+
+const handleNext = (e) => {
+  e.preventDefault();
+  if (!validateForm()) return; 
+
+  dispatch(setStudentDetails(formData));
+  navigate("/aptitude");
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
