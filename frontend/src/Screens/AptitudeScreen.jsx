@@ -244,7 +244,7 @@ function AptitudeScreen() {
           </div>
         ))}
 
-        <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4 mb-14">
           <button
             type="button"
             onClick={() => navigate(-1)}
