@@ -235,13 +235,13 @@ function AptitudeScreen() {
         <div className="flex justify-between">
           <button
             type="button"
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
             onClick={() => navigate(-1)}
           >
             back
           </button>
           <button
-          type="submit"
+            type="submit"
             onClick={handleSubmit}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition mt-4"
           >
