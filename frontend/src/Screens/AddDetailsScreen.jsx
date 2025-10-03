@@ -38,49 +38,51 @@ function AddDetailsScreen() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-const validateForm = () => {
-  const { name, mobile, email, department, college, place, sem } = formData;
+  const validateForm = () => {
+    const { name, mobile, email, department, college, place, sem } = formData;
 
-  if (!name.trim()) {
-    toast.error("Name is required");
-    return false;
-  }
-  if (!/^\d{10}$/.test(mobile)) {
-    toast.error("Enter a valid 10-digit mobile number");
-    return false;
-  }
-  if (!/^\S+@\S+\.\S+$/.test(email)) {
-    toast.error("Enter a valid email");
-    return false;
-  }
-  if (!department.trim()) {
-    toast.error("Department is required");
-    return false;
-  }
-  if (!college.trim()) {
-    toast.error("College is required");
-    return false;
-  }
-  if (!place.trim()) {
-    toast.error("Place is required");
-    return false;
-  }
-  if (!sem || sem < 1) {
-    toast.error("Enter a valid semester");
-    return false;
-  }
+    if (!name.trim()) {
+      toast.error("Name is required");
+      return false;
+    }
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      toast.error(
+        "Enter a valid 10-digit mobile number"
+      );
+      return false;
+    }
 
-  return true; 
-};
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Enter a valid email");
+      return false;
+    }
+    if (!department.trim()) {
+      toast.error("Department is required");
+      return false;
+    }
+    if (!college.trim()) {
+      toast.error("College is required");
+      return false;
+    }
+    if (!place.trim()) {
+      toast.error("Place is required");
+      return false;
+    }
+    if (!sem || sem < 1) {
+      toast.error("Enter a valid semester");
+      return false;
+    }
 
-const handleNext = (e) => {
-  e.preventDefault();
-  if (!validateForm()) return; 
+    return true;
+  };
 
-  dispatch(setStudentDetails(formData));
-  navigate("/aptitude");
-};
+  const handleNext = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
+    dispatch(setStudentDetails(formData));
+    navigate("/aptitude");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

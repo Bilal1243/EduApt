@@ -12,7 +12,7 @@ function ThankYouScreen() {
 
   const handleFinish = () => {
     dispatch(clearUserData());
-
+    window.location.href = "https://edure.in/";
   };
 
   return (
@@ -52,7 +52,6 @@ function ThankYouScreen() {
         <button
           onClick={handleFinish}
           className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-md"
-          
         >
           Finish
         </button>
