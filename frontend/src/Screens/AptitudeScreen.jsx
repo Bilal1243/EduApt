@@ -209,8 +209,15 @@ function AptitudeScreen() {
 
   return (
     <div className="min-h-screen p-4 bg-gray-50 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-6">Aptitude Exam</h1>
-      <div className="w-full max-w-3xl grid gap-6">
+      <h1 className="text-2xl font-bold mb-6 text-center">Aptitude Exam</h1>
+
+      <form
+        className="w-full max-w-3xl grid gap-6"
+        onSubmit={(e) => {
+          e.preventDefault(); 
+          handleSubmit();
+        }}
+      >
         {shuffledQuestions.map((q, index) => (
           <div key={q.id} className="bg-white p-4 rounded-lg shadow">
             <p className="font-medium mb-2">
@@ -218,13 +225,17 @@ function AptitudeScreen() {
             </p>
             <div className="grid gap-2">
               {q.options.map((opt) => (
-                <label key={opt} className="flex items-center gap-2">
+                <label
+                  key={opt}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     name={`q${q.id}`}
                     value={opt}
                     checked={answers[q.id] === opt}
                     onChange={() => handleChange(q.id, opt)}
+                    className="accent-blue-600"
                   />
                   {opt}
                 </label>
@@ -232,23 +243,23 @@ function AptitudeScreen() {
             </div>
           </div>
         ))}
-        <div className="flex justify-between">
+
+        <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4">
           <button
             type="button"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
             onClick={() => navigate(-1)}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
           >
-            back
+            Back
           </button>
           <button
             type="submit"
-            onClick={handleSubmit}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition mt-4"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
           >
             Submit
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
