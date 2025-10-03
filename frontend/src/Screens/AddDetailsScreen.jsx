@@ -68,7 +68,7 @@ function AddDetailsScreen() {
       toast.error("Place is required");
       return false;
     }
-    if (!sem || sem < 1) {
+    if (!sem || sem < 1 || sem > 8) {
       toast.error("Enter a valid semester");
       return false;
     }

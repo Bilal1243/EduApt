@@ -247,14 +247,14 @@ function AptitudeScreen() {
         <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4 mb-14">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition w-full sm:w-auto sm:order-2 cursor-pointer"
           >
-            {isLoading ? "please wait.." : "submit"}
+            {isLoading ? "please wait.." : "Submit"}
           </button>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto sm:order-1 cursor-pointer"
           >
             Back
           </button>
