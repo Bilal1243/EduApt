@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 function Loader() {
-  const text = "edure...";
+  const text = "loading...";
 
   const letterAnimation = {
     hidden: { opacity: 0 },

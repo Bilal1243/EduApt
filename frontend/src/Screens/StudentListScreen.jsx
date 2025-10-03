@@ -5,10 +5,11 @@ import {
   useGetStudentsQuery,
   useGetFeedbacksQuery,
 } from "../slices/userApiSlice";
+import Loader from "../components/Loader";
 
 function StudentListScreen() {
-  const { data: students } = useGetStudentsQuery();
-  const { data: feedbacks } = useGetFeedbacksQuery();
+  const { data: students , isLoading } = useGetStudentsQuery();
+  const { data: feedbacks, isLoading : feedbackLoading } = useGetFeedbacksQuery();
 
   // Sort students by aptitudeMark (highest to lowest)
   const sortedStudents = students
@@ -64,9 +65,11 @@ function StudentListScreen() {
     toast.success("✅ Feedbacks Excel file downloaded!");
   };
 
+    if (isLoading || feedbackLoading) return <Loader />;
+
   return (
     <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4">Student List - {sortedStudents.length}</h1>
+      <h1 className="text-2xl font-bold mb-4">Students List - {sortedStudents.length}</h1>
 
       <div className="flex justify-end mb-4 gap-2">
         <button
