@@ -2,21 +2,21 @@ import React from "react";
 import { motion } from "framer-motion";
 
 function Loader() {
-  const text = "loading...";
+  const text = "Be Patient.";
 
   const letterAnimation = {
     hidden: { opacity: 0 },
     visible: (i) => ({
       opacity: 1,
       transition: {
-        delay: i * 0.2, // delay per letter
+        delay: i * 0.2, 
       },
     }),
   };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-white">
-      <div className="flex space-x-1 text-5xl md:text-7xl font-bold text-blue-600">
+      <div className="flex space-x-1 text-3xlxl md:text-5xl font-bold text-blue-600">
         {text.split("").map((letter, index) => (
           <motion.span
             key={index}

@@ -8,12 +8,15 @@ import {
 import Loader from "../components/Loader";
 
 function StudentListScreen() {
-  const { data: students , isLoading } = useGetStudentsQuery();
-  const { data: feedbacks, isLoading : feedbackLoading } = useGetFeedbacksQuery();
+  const { data: students, isLoading } = useGetStudentsQuery();
+  const { data: feedbacks, isLoading: feedbackLoading } =
+    useGetFeedbacksQuery();
 
   // Sort students by aptitudeMark (highest to lowest)
   const sortedStudents = students
-    ? [...students].sort((a, b) => (b.aptitudeMark || 0) - (a.aptitudeMark || 0))
+    ? [...students].sort(
+        (a, b) => (b.aptitudeMark || 0) - (a.aptitudeMark || 0)
+      )
     : [];
 
   // Export students to Excel
@@ -26,7 +29,7 @@ function StudentListScreen() {
       Email: s.email,
       Mobile: s.mobile,
       College: s.college,
-      Place : s.place,
+      Place: s.place,
       Department: s.department,
       Semester: s.sem,
       "Aptitude Mark": s.aptitudeMark || 0,
@@ -49,7 +52,7 @@ function StudentListScreen() {
       Phone: f.phone,
       Email: f.email,
       College: f.college,
-      Place : f.place,
+      Place: f.place,
       "Test Experience": f.testExperience,
       "Computer Knowledge": f.computerKnowledge,
       "Uses AI": f.usesAI,
@@ -65,50 +68,65 @@ function StudentListScreen() {
     toast.success("✅ Feedbacks Excel file downloaded!");
   };
 
-    if (isLoading || feedbackLoading) return <Loader />;
+  if (isLoading || feedbackLoading) return <Loader />;
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4">Students List - {sortedStudents.length}</h1>
-
-      <div className="flex justify-end mb-4 gap-2">
-        <button
-          onClick={handleDownloadStudentsExcel}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Download Students
-        </button>
-        <button
-          onClick={handleDownloadFeedbacksExcel}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-        >
-          Download Feedbacks
-        </button>
+    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">
+          👩‍🎓 Students List{" "}
+          <span className="text-blue-600">({sortedStudents.length})</span>
+        </h1>
+        <div className="flex gap-3 mt-4 sm:mt-0">
+          <button
+            onClick={handleDownloadStudentsExcel}
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 active:scale-95 transition"
+          >
+            ⬇️ Students
+          </button>
+          <button
+            onClick={handleDownloadFeedbacksExcel}
+            className="bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-700 active:scale-95 transition"
+          >
+            ⬇️ Feedbacks
+          </button>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border rounded-lg">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Email</th>
-              <th className="py-2 px-4 border">Mobile</th>
-              <th className="py-2 px-4 border">College</th>
-              <th className="py-2 px-4 border">Department</th>
-              <th className="py-2 px-4 border">Semester</th>
-              <th className="py-2 px-4 border">Aptitude Mark</th>
+      {/* Table */}
+      <div className="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
+        <table className="min-w-full text-sm text-gray-700">
+          <thead>
+            <tr className="bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-left">
+              <th className="py-3 px-4 font-semibold">Name</th>
+              <th className="py-3 px-4 font-semibold">Email</th>
+              <th className="py-3 px-4 font-semibold">Mobile</th>
+              <th className="py-3 px-4 font-semibold">College</th>
+              <th className="py-3 px-4 font-semibold">Department</th>
+              <th className="py-3 px-4 font-semibold">Semester</th>
+              <th className="py-3 px-4 font-semibold text-center">
+                Aptitude Mark
+              </th>
             </tr>
           </thead>
           <tbody>
-            {sortedStudents.map((student) => (
-              <tr key={student._id} className="text-center">
-                <td className="py-2 px-4 border">{student.name}</td>
-                <td className="py-2 px-4 border">{student.email}</td>
-                <td className="py-2 px-4 border">{student.mobile}</td>
-                <td className="py-2 px-4 border">{student.college}</td>
-                <td className="py-2 px-4 border">{student.department}</td>
-                <td className="py-2 px-4 border">{student.sem}</td>
-                <td className="py-2 px-4 border">{student.aptitudeMark || 0}</td>
+            {sortedStudents.map((student, index) => (
+              <tr
+                key={student._id}
+                className={`border-t hover:bg-gray-50 transition ${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                }`}
+              >
+                <td className="py-3 px-4">{student.name}</td>
+                <td className="py-3 px-4">{student.email}</td>
+                <td className="py-3 px-4">{student.mobile}</td>
+                <td className="py-3 px-4">{student.college}</td>
+                <td className="py-3 px-4">{student.department}</td>
+                <td className="py-3 px-4">{student.sem}</td>
+                <td className="py-3 px-4 text-center font-semibold text-blue-600">
+                  {student.aptitudeMark || 0}
+                </td>
               </tr>
             ))}
           </tbody>
