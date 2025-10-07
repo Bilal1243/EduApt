@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFeedback, setStudentDetails } from "../slices/userDetailsSlice";
 import { toast } from "react-toastify";
 import { useSubmitFeedbackMutation } from "../slices/userApiSlice";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function FeedbackScreen() {
   const dispatch = useDispatch();
@@ -18,24 +18,40 @@ function FeedbackScreen() {
     interestedCourses: "",
   });
 
-  const [submitFeedback,{isLoading}] = useSubmitFeedbackMutation();
+  const [submitFeedback, { isLoading }] = useSubmitFeedbackMutation();
   const navigate = useNavigate();
+
+  // Disable browser back button
+  useEffect(() => {
+    window.history.pushState(null, document.title, window.location.href);
+    const handlePopState = (e) => {
+      window.history.pushState(null, document.title, window.location.href);
+    };
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  // Load existing feedback if any
+  useEffect(() => {
+    if (!studentDetails._id) {
+      const data = JSON.parse(localStorage.getItem("finalData"));
+      if (data?._id) {
+        dispatch(setStudentDetails(data));
+      }
+    } else if (studentDetails.feedback) {
+      setLocalFeedback(studentDetails.feedback);
+    }
+  }, [studentDetails, dispatch]);
 
   const handleChange = (e) => {
     setLocalFeedback({ ...feedback, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    if (!studentDetails._id) {
-      // maybe fetch from localStorage again or redirect
-      const data = JSON.parse(localStorage.getItem("finalData"));
-      if (data?._id) {
-        dispatch(setStudentDetails(data));
-      }
-    }
-  }, [studentDetails]);
-
   const handleSubmit = async () => {
+    // Validation
     if (
       !feedback.testExperience ||
       !feedback.computerKnowledge ||
@@ -47,13 +63,14 @@ function FeedbackScreen() {
       return toast.error("Please fill all required fields!");
     }
 
-    const updatedData = { ...studentDetails, feedback };
-
-    // ✅ Update Redux state
-    dispatch(setFeedback(updatedData));
-    localStorage.setItem("finalData", JSON.stringify(updatedData));
-
     try {
+      const updatedData = { ...studentDetails, feedback };
+
+      // ✅ Update Redux state
+      dispatch(setFeedback(updatedData));
+      localStorage.setItem("finalData", JSON.stringify(updatedData));
+
+      // Call backend
       await submitFeedback({
         userId: studentDetails._id,
         name: studentDetails.name,
@@ -67,15 +84,23 @@ function FeedbackScreen() {
       toast.success("✅ Feedback saved successfully!");
       navigate("/thankyou");
     } catch (error) {
-      toast.error(error?.message || error?.data?.message);
+      toast.error(
+        error?.data?.message || error?.message || "Something went wrong"
+      );
     }
   };
+
+  useEffect(() => {
+    if (!studentDetails) {
+      navigate("/");
+    }
+  }, [studentDetails]);
 
   return (
     <div className="min-h-screen p-6 bg-gray-50 flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-6">Feedback Form</h1>
       <div className="grid gap-4 w-full max-w-xl">
-        {/* How was the test */}
+        {/* Test Experience */}
         <label className="font-medium">How was the test?</label>
         <select
           name="testExperience"
@@ -89,7 +114,7 @@ function FeedbackScreen() {
           <option value="Difficult">Difficult</option>
         </select>
 
-        {/* Knowledge in Computer */}
+        {/* Computer Knowledge */}
         <label className="font-medium">
           How is your knowledge in computer?
         </label>
@@ -105,7 +130,7 @@ function FeedbackScreen() {
           <option value="Advanced">Advanced</option>
         </select>
 
-        {/* Do you use AI */}
+        {/* Uses AI */}
         <label className="font-medium">Do you use AI?</label>
         <select
           name="usesAI"
@@ -118,10 +143,12 @@ function FeedbackScreen() {
           <option value="No">No</option>
         </select>
 
-        {/* Which AI */}
+        {/* AI Tool */}
         {feedback.usesAI === "Yes" && (
           <>
-            <label className="font-medium">Which type of AI are you using?</label>
+            <label className="font-medium">
+              Which type of AI are you using?
+            </label>
             <input
               type="text"
               name="aiTool"
@@ -133,7 +160,7 @@ function FeedbackScreen() {
           </>
         )}
 
-        {/* Want to know more about AI */}
+        {/* Want More AI */}
         <label className="font-medium">
           Do you want to know more about working of AI?
         </label>
@@ -161,11 +188,21 @@ function FeedbackScreen() {
         >
           <option value="">Select</option>
           <option value="Pg in Ai">Pg in Ai</option>
-          <option value="Pg in Business Analytics">Pg in Business Analytics</option>
-          <option value="Pg in International Finance">Pg in International Finance</option>
-          <option value="Diploma in Data Science">Diploma in Data Science</option>
-          <option value="Diploma in Data Analytics">Diploma in Data Analytics</option>
-          <option value="Diploma in Financial Analytics">Diploma in Financial Analytics</option>
+          <option value="Pg in Business Analytics">
+            Pg in Business Analytics
+          </option>
+          <option value="Pg in International Finance">
+            Pg in International Finance
+          </option>
+          <option value="Diploma in Data Science">
+            Diploma in Data Science
+          </option>
+          <option value="Diploma in Data Analytics">
+            Diploma in Data Analytics
+          </option>
+          <option value="Diploma in Financial Analytics">
+            Diploma in Financial Analytics
+          </option>
           <option value="Mern Stack Development">Mern Stack Development</option>
           <option value="Full Stack With Python">Full Stack With Python</option>
           <option value="Digital Marketing">Digital Marketing</option>
@@ -176,7 +213,7 @@ function FeedbackScreen() {
           onClick={handleSubmit}
           className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition mt-4"
         >
-          {isLoading ? 'please wait..' : 'Submit Feedback'}
+          {isLoading ? "please wait.." : "Submit Feedback"}
         </button>
       </div>
     </div>

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setStudentDetails } from "../slices/userDetailsSlice";
-import { useEffect } from "react";
+import { setStudentDetails, setTestEndTime } from "../slices/userDetailsSlice";
+import { useStartTestMutation } from "../slices/userApiSlice";
 
 function AddDetailsScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const studentDetails = useSelector((state) => state.user.finalData);
+
+  const [startTest, { isLoading }] = useStartTestMutation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,12 +48,9 @@ function AddDetailsScreen() {
       return false;
     }
     if (!/^[6-9]\d{9}$/.test(mobile)) {
-      toast.error(
-        "Enter a valid 10-digit mobile number"
-      );
+      toast.error("Enter a valid 10-digit mobile number");
       return false;
     }
-
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       toast.error("Enter a valid email");
       return false;
@@ -76,14 +75,29 @@ function AddDetailsScreen() {
     return true;
   };
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    dispatch(setStudentDetails(formData));
-    navigate("/aptitude");
-  };
+    try {
+      // Call backend to register/start test
+      const res = await startTest({...formData}).unwrap();
+      console.log(res)
+      const studentData = res.student;
 
+      // Save in Redux + localStorage
+      dispatch(setStudentDetails(studentData));
+
+      // Set test end time (15 minutes from now)
+      const endTime = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      dispatch(setTestEndTime(endTime));
+
+      toast.success("Student registered successfully!");
+      navigate("/aptitude");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white shadow-lg rounded-xl w-full max-w-2xl p-8">

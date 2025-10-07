@@ -14,23 +14,30 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-const addStudent = async (req, res) => {
+// 1️⃣ Start Test Controller
+const startTest = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      mobile,
-      department,
-      college,
-      place,
-      sem,
-      aptitudeMark,
-    } = req.body;
+    const { name, email, mobile, department, college, place, sem } = req.body;
 
-    const studentExists = await Students.findOne({ email });
-    if (studentExists) {
-      return res.status(400).json({ message: "Student already registered" });
+    // Check if already started
+    const existingStudent = await Students.findOne({ email });
+
+    if (existingStudent) {
+      const now = new Date();
+      if (existingStudent.endTime && now < existingStudent.endTime) {
+        return res.status(200).json({
+          message: "Test already started",
+          student: existingStudent,
+          endTime: existingStudent.endTime,
+        });
+      }
+      return res
+        .status(400)
+        .json({ message: "Test already completed or time expired" });
     }
+
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + 15 * 60 * 1000); // 15 minutes
 
     const student = new Students({
       name,
@@ -40,18 +47,50 @@ const addStudent = async (req, res) => {
       college,
       place,
       sem,
-      aptitudeMark,
+      startTime,
+      endTime,
     });
 
-    const savedStudent = await student.save();
+    await student.save();
 
     res.status(201).json({
-      message: "✅ Student added successfully",
-      student: savedStudent,
+      message: "Test started successfully",
+      endTime,
+      student,
     });
   } catch (error) {
-    console.error("Error adding student:", error);
-    res.status(500).json({ message: "Server error, could not add student" });
+    console.error("Error starting test:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// 2️⃣ Submit Test Controller
+const addStudent = async (req, res) => {
+  try {
+    const { email, aptitudeMark } = req.body;
+
+    const student = await Students.findOne({ email });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const now = new Date();
+    if (now > student.endTime) {
+      return res
+        .status(400)
+        .json({ message: "⏰ Time is up! Cannot submit test." });
+    }
+
+    student.aptitudeMark = aptitudeMark;
+    await student.save();
+
+    res.status(200).json({
+      message: "✅ Test submitted successfully",
+      student,
+    });
+  } catch (error) {
+    console.error("Error submitting test:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -96,4 +135,4 @@ const addFeedback = async (req, res) => {
   }
 };
 
-export { getAllStudents, addStudent, addFeedback, getFeedbacks };
+export { getAllStudents, startTest, addStudent, addFeedback, getFeedbacks };

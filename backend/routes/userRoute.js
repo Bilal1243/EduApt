@@ -4,15 +4,18 @@ import {
   addFeedback,
   addStudent,
   getFeedbacks,
+  startTest,
 } from "../controllers/userController.js";
 
 const userRoute = express.Router();
 
 userRoute.get("/", getAllStudents);
 
-userRoute.post("/add-student", addStudent);
+userRoute.post("/start-test", startTest);
 
-userRoute.get('/getFeedbacks',getFeedbacks)
+userRoute.post("/submit-test", addStudent);
+
+userRoute.get("/getFeedbacks", getFeedbacks);
 
 userRoute.post("/feedback", addFeedback);
 

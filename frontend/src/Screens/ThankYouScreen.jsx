@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearUserData } from "../slices/userDetailsSlice";
 import { useNavigate } from "react-router-dom";
@@ -13,9 +13,15 @@ function ThankYouScreen() {
   const studentDetails = useSelector((state) => state.user.finalData) || {};
 
   const handleFinish = () => {
-    dispatch(clearUserData());
     window.location.href = "https://edure.in/"; // redirect to your site
+    dispatch(clearUserData());
   };
+
+  useEffect(() => {
+    if (!studentDetails) {
+      navigate("/");
+    }
+  }, [studentDetails]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 p-6">

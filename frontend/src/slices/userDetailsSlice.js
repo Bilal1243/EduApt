@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   finalData: JSON.parse(localStorage.getItem("finalData")) || {},
+  testEndTime: localStorage.getItem("testEndTime") || null, // store test end time
 };
 
 const userSlice = createSlice({
@@ -18,17 +19,30 @@ const userSlice = createSlice({
     },
     setFeedback: (state, action) => {
       state.finalData = {
-        ...action.payload, // update feedback only
+        ...state.finalData,
+        feedback: action.payload.feedback,
       };
       localStorage.setItem("finalData", JSON.stringify(state.finalData));
     },
+
     clearUserData: (state) => {
       state.finalData = {};
+      state.testEndTime = null;
       localStorage.removeItem("finalData");
+      localStorage.removeItem("testEndTime");
+    },
+    setTestEndTime: (state, action) => {
+      state.testEndTime = action.payload;
+      localStorage.setItem("testEndTime", action.payload);
     },
   },
 });
 
-export const { setStudentDetails, setFinalMark, setFeedback, clearUserData } =
-  userSlice.actions;
+export const {
+  setStudentDetails,
+  setFinalMark,
+  setFeedback,
+  clearUserData,
+  setTestEndTime,
+} = userSlice.actions;
 export default userSlice.reducer;

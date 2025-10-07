@@ -29,9 +29,11 @@ const studentSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  startTime: { type: Date, default: Date.now },
+  endTime: Date,
   aptitudeMark: {
     type: Number,
-    required: true,
+    default : 0
   },
 });
 

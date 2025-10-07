@@ -151,15 +151,15 @@ export const questions = [
 function AptitudeScreen() {
   const dispatch = useDispatch();
   const studentDetails = useSelector((state) => state.user.finalData);
-
   const [submitData, { isLoading }] = useAddUserDataMutation();
 
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [showLoadingPopup, setShowLoadingPopup] = useState(false);
 
   const navigate = useNavigate();
 
-  // Shuffle array (Fisher-Yates algorithm)
   const shuffleArray = (arr) => {
     let shuffled = [...arr];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -169,10 +169,33 @@ function AptitudeScreen() {
     return shuffled;
   };
 
-  // On mount, shuffle the questions
   useEffect(() => {
     setShuffledQuestions(shuffleArray(questions));
+
+    const endTime = localStorage.getItem("testEndTime");
+    console.log(endTime);
+    if (endTime) {
+      const remaining = Math.floor((new Date(endTime) - new Date()) / 1000);
+      setTimeLeft(remaining > 0 ? remaining : 0);
+    }
   }, []);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          handleSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   const handleChange = (qId, value) => {
     setAnswers({ ...answers, [qId]: value });
@@ -188,28 +211,58 @@ function AptitudeScreen() {
 
   const handleSubmit = async () => {
     if (Object.keys(answers).length < questions.length) {
-      return toast.error("Please answer all questions");
+      toast.warning("You did not answer all questions. Submitting anyway...");
     }
 
     const score = calculateScore();
 
     try {
-      const res = await submitData({
-        ...studentDetails,
-        aptitudeMark: score,
-      }).unwrap();
-      let studentData = res.student;
-      localStorage.setItem("finalData", JSON.stringify({ ...studentData }));
+      setShowLoadingPopup(true);
+      // 1️⃣ Update Redux state immediately
+      dispatch(setFinalMark(score));
+
+      // 2️⃣ Prepare updated student data
+      const updatedStudent = { ...studentDetails, aptitudeMark: score };
+
+      // 3️⃣ Update localStorage
+      localStorage.setItem("finalData", JSON.stringify(updatedStudent));
+
+      // 4️⃣ Submit to backend
+      const res = await submitData(updatedStudent).unwrap();
+
+      // 5️⃣ Optional: update localStorage with server response
+      const studentData = res.student;
+      localStorage.setItem("finalData", JSON.stringify(studentData));
+
       toast.success("Submitted successfully!");
       navigate("/feedback", { state: studentData });
     } catch (err) {
       toast.error(err?.data?.message || err?.message);
+    } finally {
+      setShowLoadingPopup(false);
     }
   };
 
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    if (!studentDetails) {
+      navigate("/");
+    }
+  }, [studentDetails]);
+
   return (
     <div className="min-h-screen p-4 bg-gray-50 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-6 text-center">Aptitude Exam</h1>
+      <div className="w-full sticky top-0 z-50 bg-white shadow p-3 flex justify-between items-center">
+        <h1 className="text-xl sm:text-2xl font-bold">Aptitude Exam</h1>
+        <div className="text-lg sm:text-xl font-semibold text-red-600">
+          ⏳ {formatTime(timeLeft)}
+        </div>
+      </div>
 
       <form
         className="w-full max-w-3xl grid gap-6"
@@ -247,9 +300,10 @@ function AptitudeScreen() {
         <div className="flex flex-col sm:flex-row justify-between mt-4 gap-4 mb-14">
           <button
             type="submit"
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition w-full sm:w-auto sm:order-2 cursor-pointer"
+            disabled={isLoading || timeLeft <= 0}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition w-full sm:w-auto sm:order-2 disabled:opacity-50 cursor-pointer"
           >
-            {isLoading ? "please wait.." : "Submit"}
+            {isLoading ? "Submitting..." : "Submit"}
           </button>
           <button
             type="button"
@@ -260,6 +314,18 @@ function AptitudeScreen() {
           </button>
         </div>
       </form>
+
+      {/* ✅ Loading popup */}
+      {showLoadingPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-lg font-medium text-gray-700">
+              Submitting your answers...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

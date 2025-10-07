@@ -7,9 +7,16 @@ const userApiSlice = apiSlice.injectEndpoints({
         url: "/api/user",
       }),
     }),
+    startTest: builder.mutation({
+      query: (data) => ({
+        url: "/api/user/start-test",
+        method: "POST",
+        body: data,
+      }),
+    }),
     addUserData: builder.mutation({
       query: (data) => ({
-        url: "/api/user/add-student",
+        url: "/api/user/submit-test",
         method: "POST",
         body: data,
       }),
@@ -31,6 +38,7 @@ const userApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetStudentsQuery,
+  useStartTestMutation,
   useAddUserDataMutation,
   useSubmitFeedbackMutation,
   useGetFeedbacksQuery,
