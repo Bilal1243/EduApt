@@ -8,7 +8,7 @@ export default defineConfig({
   server :{
     proxy : {
       '/api' :{
-        target : 'https://eduapt-server.onrender.com' //https://eduapt-server.onrender.com  //  http://localhost:3000/
+        target : 'http://localhost:3000/' //https://eduapt-server.onrender.com  //  http://localhost:3000/
       }
     }
   }

@@ -74,13 +74,6 @@ const addStudent = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    const now = new Date();
-    if (now > student.endTime) {
-      return res
-        .status(400)
-        .json({ message: "⏰ Time is up! Cannot submit test." });
-    }
-
     student.aptitudeMark = aptitudeMark;
     await student.save();
 

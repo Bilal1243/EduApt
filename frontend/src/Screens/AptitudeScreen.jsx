@@ -173,7 +173,6 @@ function AptitudeScreen() {
     setShuffledQuestions(shuffleArray(questions));
 
     const endTime = localStorage.getItem("testEndTime");
-    console.log(endTime);
     if (endTime) {
       const remaining = Math.floor((new Date(endTime) - new Date()) / 1000);
       setTimeLeft(remaining > 0 ? remaining : 0);
