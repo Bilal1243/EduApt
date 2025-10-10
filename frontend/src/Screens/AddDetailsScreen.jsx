@@ -22,6 +22,7 @@ function AddDetailsScreen() {
     place: "",
     sem: "",
   });
+  const [showLoadingPopup, setShowLoadingPopup] = useState(false);
 
   useEffect(() => {
     if (studentDetails && Object.keys(studentDetails).length > 0) {
@@ -80,19 +81,24 @@ function AddDetailsScreen() {
     if (!validateForm()) return;
 
     try {
+      setShowLoadingPopup(true);
+
       // Call backend to register/start test
-      const res = await startTest({...formData}).unwrap();
-      console.log(res)
+      const res = await startTest({ ...formData }).unwrap();
       const studentData = res.student;
 
       // Save in Redux + localStorage
       dispatch(setStudentDetails(studentData));
 
       // Set test end time (15 minutes from now)
-      const endTime = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const endTime = new Date(res.endTime).toISOString();
+
       dispatch(setTestEndTime(endTime));
 
-      toast.success("Student registered successfully!");
+      setShowLoadingPopup(false);
+
+      toast.success(res.message);
+
       navigate("/aptitude");
     } catch (err) {
       toast.error(err?.data?.message || err?.message);
@@ -145,6 +151,17 @@ function AddDetailsScreen() {
           </div>
         </form>
       </div>
+
+      {showLoadingPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-lg font-medium text-gray-700">
+              Submitting your answers...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
