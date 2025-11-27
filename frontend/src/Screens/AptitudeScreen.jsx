@@ -254,6 +254,63 @@ function AptitudeScreen() {
     }
   }, [studentDetails]);
 
+  // 🚫 Anti-Cheat: Reset ONLY answers when tab is switched or minimized
+  useEffect(() => {
+    const resetAnswers = () => {
+      // Clear only answers
+      setAnswers({});
+      window.location.reload();
+    };
+
+    // Detect tab switch
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        resetAnswers();
+      }
+    };
+
+    // Detect minimize or switching apps
+    const onWindowBlur = () => {
+      resetAnswers();
+    };
+
+    // Disable right-click (optional)
+    const disableRightClick = (e) => e.preventDefault();
+    window.addEventListener("contextmenu", disableRightClick);
+
+    // Disable copy/paste/cut
+    const blockCopyPaste = (e) => e.preventDefault();
+    document.addEventListener("copy", blockCopyPaste);
+    document.addEventListener("paste", blockCopyPaste);
+    document.addEventListener("cut", blockCopyPaste);
+
+    // Disable shortcuts and reset answers
+    const disableShortcuts = (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        resetAnswers();
+      }
+      if (e.key === "F12") {
+        e.preventDefault();
+        resetAnswers();
+      }
+    };
+    window.addEventListener("keydown", disableShortcuts);
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", onWindowBlur);
+
+    return () => {
+      window.removeEventListener("contextmenu", disableRightClick);
+      document.removeEventListener("copy", blockCopyPaste);
+      document.removeEventListener("paste", blockCopyPaste);
+      document.removeEventListener("cut", blockCopyPaste);
+      window.removeEventListener("keydown", disableShortcuts);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onWindowBlur);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen p-4 bg-gray-50 flex flex-col items-center">
       <div className="w-full sticky top-0 z-50 bg-white shadow p-3 flex justify-between items-center">
