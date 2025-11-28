@@ -4,6 +4,7 @@ import { setFinalMark } from "../slices/userDetailsSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAddUserDataMutation } from "../slices/userApiSlice";
+import Calculator from "../components/Calculator";
 
 export const questions = [
   {
@@ -157,6 +158,7 @@ function AptitudeScreen() {
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [showLoadingPopup, setShowLoadingPopup] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
 
   const navigate = useNavigate();
 
@@ -311,6 +313,52 @@ function AptitudeScreen() {
     };
   }, []);
 
+  const popupStyles = {
+    overlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100vh",
+      background: "rgba(0, 0, 0, 0.6)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      zIndex: 9999,
+    },
+
+    modal: {
+      background: "#ffffff",
+      padding: "20px",
+      borderRadius: "14px",
+      width: "100%",
+      maxWidth: "350px", // 🔥 bigger on desktop
+      transform: "scale(1)",
+      animation: "popupFade 0.25s ease",
+      boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+      position: "relative",
+    },
+
+    closeBtn: {
+      position: "absolute",
+      top: "8px",
+      right: "8px",
+      background: "#ff3b3b",
+      color: "#fff",
+      border: "none",
+      borderRadius: "50%",
+      width: "25px",
+      height: "25px",
+      cursor: "pointer",
+      fontSize: "13px",
+      fontWeight: "bold",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  };
+
   return (
     <div className="min-h-screen p-4 bg-gray-50 flex flex-col items-center">
       <div className="w-full sticky top-0 z-50 bg-white shadow p-3 flex justify-between items-center">
@@ -319,6 +367,38 @@ function AptitudeScreen() {
           ⏳ {formatTime(timeLeft)}
         </div>
       </div>
+
+      <div className="flex items-center justify-end w-full fixed bottom-5 right-5">
+        <button
+          onClick={() => setShowCalculator(!showCalculator)}
+          style={{
+            padding: "8px 16px",
+            background: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            marginBottom: "15px",
+          }}
+        >
+          {showCalculator ? "Close Calculator" : "Open Calculator"}
+        </button>
+      </div>
+
+      {showCalculator && (
+        <div style={popupStyles.overlay}>
+          <div style={popupStyles.modal}>
+            <button
+              style={popupStyles.closeBtn}
+              onClick={() => setShowCalculator(false)}
+            >
+              ✖
+            </button>
+
+            <Calculator />
+          </div>
+        </div>
+      )}
 
       <form
         className="w-full max-w-3xl grid gap-6"
